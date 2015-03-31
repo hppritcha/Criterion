@@ -24,18 +24,47 @@
 #ifndef CRITERION_COMMON_H_
 # define CRITERION_COMMON_H_
 
+# if defined(_MSC_VER)
+#  if _MSC_VER < 1800
+#   error \
+        Your version of MSVC++ is too old, please compile your tests using  \
+        a c99 compiler, like MinGW or MSVC 12.0+ (Included in visual studio \
+        2013)
+#  endif
+# endif
+
+# ifndef USE_MSVC
+#  ifdef _MSC_VER
+#   define USE_MSVC !!_MSC_VER
+#  else
+#   define USE_MSVC 0
+# endif
+
 # ifdef __APPLE__
 #  define SECTION_START_PREFIX       __first
 #  define SECTION_END_PREFIX         __last
 #  define SECTION_START_SUFFIX(Name) __asm("section$start$__DATA$" Name)
 #  define SECTION_END_SUFFIX(Name)   __asm("section$end$__DATA$" Name)
 #  define SECTION_(Name)             __attribute__((section("__DATA," Name)))
+#  define SECTION_SUFFIX_
+# elif USE_MSVC
+#  define SECTION_START_PREFIX       __start
+#  define SECTION_END_PREFIX         __stop
+#  define SECTION_START_SUFFIX(Name)
+#  define SECTION_END_SUFFIX(Name)
+#  define SECTION_(Name)                    \
+    __pragma(data_seg(push))                \
+    __pragma(section(Name, read))           \
+    __declspec(allocate(Name))
+#  define SECTION_SUFFIX_                   \
+    __pragma(data_seg(pop))
 # else
 #  define SECTION_START_PREFIX       __start
 #  define SECTION_END_PREFIX         __stop
 #  define SECTION_START_SUFFIX(Name)
 #  define SECTION_END_SUFFIX(Name)
 #  define SECTION_(Name)             __attribute__((section(Name)))
+#  define SECTION_SUFFIX_
 # endif
 
 # define MAKE_IDENTIFIER_(Prefix, Id) MAKE_IDENTIFIER__(Prefix, Id)
