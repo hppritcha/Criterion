@@ -71,7 +71,9 @@ struct criterion_test_set *criterion_init(void) {
         insert_ordered_set(suites, &css, sizeof (css));
     }
 
+    size_t nb_tests = 0;
     FOREACH_TEST_SEC(test) {
+        ++nb_tests;
         struct criterion_suite_set css = {
             .suite = { .name = test->category },
         };
@@ -81,9 +83,6 @@ struct criterion_test_set *criterion_init(void) {
 
         insert_ordered_set(s->tests, test, sizeof(*test));
     }
-
-    const size_t nb_tests = SECTION_END(criterion_tests)
-                          - SECTION_START(criterion_tests);
 
     return unique_ptr(struct criterion_test_set, {
         suites,

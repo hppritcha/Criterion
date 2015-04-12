@@ -35,6 +35,12 @@ AC_ARG_ENABLE([gcov],
     ],
     [])
 
+AC_ARG_ENABLE([msvc-support],
+  [AS_HELP_STRING([--enable-msvc-support],
+    [Make the library usable by the MSVC compiler only])],
+    [AC_DEFINE([FOR_MSVC], [1], [Is the library meant to be used with MSVC only?])],
+    [])
+
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_FILES([Makefile samples/Makefile po/Makefile.in])
 

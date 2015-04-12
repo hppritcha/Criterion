@@ -31,14 +31,44 @@ DECL_SECTION_LIMITS(struct criterion_suite, crit_suites);
 
 struct criterion_test_set *criterion_init(void);
 
-# define FOREACH_TEST_SEC(Test)                                         \
+# ifndef FOR_MSVC
+#  define FOREACH_TEST_SEC(Test)                                        \
     for (struct criterion_test *Test = SECTION_START(criterion_tests);  \
             Test < SECTION_END(criterion_tests);                        \
             ++Test)
 
-# define FOREACH_SUITE_SEC(Suite)                                       \
+#  define FOREACH_SUITE_SEC(Suite)                                      \
     for (struct criterion_suite *Suite = SECTION_START(crit_suites);    \
             Suite < SECTION_END(crit_suites);                           \
             ++Suite)
+# else
+__attribute__((pure,always_inline))
+inline struct criterion_test *get_tsec_start(struct criterion_test *start) {
+    static struct criterion_test *ptr = NULL;
+    if (!ptr)
+        for (ptr = start; !ptr->category; ++ptr);
+    return ptr;
+}
+
+__attribute__((pure,always_inline))
+inline struct criterion_suite *get_ssec_start(struct criterion_suite *start) {
+    static struct criterion_suite *ptr = NULL;
+    if (!ptr)
+        for (ptr = start; !ptr->name; ++ptr);
+    return ptr;
+}
+
+#  define FOREACH_TEST_SEC(Test)                                        \
+    for (struct criterion_test *Test                                    \
+                = get_tsec_start(SECTION_START(criterion_tests));       \
+            Test->category;                                             \
+            ++Test)
+
+#  define FOREACH_SUITE_SEC(Suite)                                      \
+    for (struct criterion_suite *Suite                                  \
+                = get_ssec_start(SECTION_START(crit_suites));           \
+            Suite->name;                                                \
+            ++Suite)
+# endif
 
 #endif /* !CRITERION_RUNNER_H_ */

@@ -28,7 +28,7 @@
         .category = #Category,                                                 \
         .test     = IDENTIFIER_(Category, Name, impl),                         \
         .data     = &IDENTIFIER_(Category, Name, extra)                        \
-    };                                                                         \
+    } SECTION_SUFFIX_;                                                         \
     TEST_PROTOTYPE_(Category, Name)
 
 # define TestSuite(...) TestSuite_(__VA_ARGS__, .sentinel_ = 0)
@@ -42,7 +42,7 @@
     const struct criterion_suite SUITE_IDENTIFIER_(Name, meta) = {             \
         .name     = #Name,                                                     \
         .data     = &SUITE_IDENTIFIER_(Name, extra),                           \
-    }
+    } SECTION_SUFFIX_
 
 int criterion_run_all_tests(void);
 
