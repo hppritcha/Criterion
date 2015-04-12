@@ -13,8 +13,26 @@
 # define SUITE_IDENTIFIER_(Name, Suffix) \
     suite_ ## Name ## _ ## Suffix
 
-# define Test(...) Test_(__VA_ARGS__, .sentinel_ = 0)
-# define Test_(Category, Name, ...)                                            \
+# if IS_MSVC
+#  define Test(Category, Name, ...)                                            \
+    TEST_PROTOTYPE_(Category, Name);                                           \
+    struct criterion_test_extra_data IDENTIFIER_(Category, Name, extra) = {    \
+        .identifier_ = #Category "/" #Name,                                    \
+        .file_    = __FILE__,                                                  \
+        .line_    = __LINE__,                                                  \
+        __VA_ARGS__                                                            \
+    };                                                                         \
+    SECTION_("criterion_tests$u")                                              \
+    const struct criterion_test IDENTIFIER_(Category, Name, meta) = {          \
+        .name     = #Name,                                                     \
+        .category = #Category,                                                 \
+        .test     = IDENTIFIER_(Category, Name, impl),                         \
+        .data     = &IDENTIFIER_(Category, Name, extra)                        \
+    } SECTION_SUFFIX_;                                                         \
+    TEST_PROTOTYPE_(Category, Name)
+# else
+#  define Test(...) Test_(__VA_ARGS__, .sentinel_ = 0)
+#  define Test_(Category, Name, ...)                                           \
     TEST_PROTOTYPE_(Category, Name);                                           \
     struct criterion_test_extra_data IDENTIFIER_(Category, Name, extra) = {    \
         .identifier_ = #Category "/" #Name,                                    \
@@ -30,9 +48,24 @@
         .data     = &IDENTIFIER_(Category, Name, extra)                        \
     } SECTION_SUFFIX_;                                                         \
     TEST_PROTOTYPE_(Category, Name)
+# endif
 
-# define TestSuite(...) TestSuite_(__VA_ARGS__, .sentinel_ = 0)
-# define TestSuite_(Name, ...)                                                 \
+
+# if IS_MSVC
+#  define TestSuite(Name, ...)                                                 \
+    struct criterion_test_extra_data SUITE_IDENTIFIER_(Name, extra) = {        \
+        .file_    = __FILE__,                                                  \
+        .line_    = 0,                                                         \
+        __VA_ARGS__                                                            \
+    };                                                                         \
+    SECTION_("crit_suites$u")                                                  \
+    const struct criterion_suite SUITE_IDENTIFIER_(Name, meta) = {             \
+        .name     = #Name,                                                     \
+        .data     = &SUITE_IDENTIFIER_(Name, extra),                           \
+    } SECTION_SUFFIX_
+# else
+#  define TestSuite(...) TestSuite_(__VA_ARGS__, .sentinel_ = 0)
+#  define TestSuite_(Name, ...)                                                \
     struct criterion_test_extra_data SUITE_IDENTIFIER_(Name, extra) = {        \
         .file_    = __FILE__,                                                  \
         .line_    = 0,                                                         \
@@ -43,6 +76,8 @@
         .name     = #Name,                                                     \
         .data     = &SUITE_IDENTIFIER_(Name, extra),                           \
     } SECTION_SUFFIX_
+# endif
+
 
 int criterion_run_all_tests(void);
 

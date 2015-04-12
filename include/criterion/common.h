@@ -51,15 +51,13 @@
 # elif defined(FOR_MSVC)
 #  define SECTION_START_PREFIX       __start
 #  define SECTION_END_PREFIX         __stop
-#  define SECTION_I(Name, I)         __attribute__((section(Name "$" I)))
-#  define SECTION_(Name)             SECTION_I(Name, "u")
+#  define SECTION_(Name, I)          __attribute__((section(Name)))
 #  define SECTION_SUFFIX_
 # elif IS_MSVC
-#  define SECTION_I(Name, I)            \
+#  define SECTION_(Name)                \
     __pragma(data_seg(push))            \
-    __pragma(section(Name "$" I, read)) \
-    __declspec(allocate(Name "$" I))
-#  define SECTION_(Name)             SECTION_I(Name, "u")
+    __pragma(section(Name, read))       \
+    __declspec(allocate(Name))
 #  define SECTION_SUFFIX_            __pragma(data_seg(pop))
 # else
 #  define SECTION_START_PREFIX       __start
@@ -80,13 +78,14 @@
 # define SECTION_END(Name)    g_ ## Name ## _section_end
 
 # ifdef FOR_MSVC
+#  define CRIT_STR_(S) #S
 #  define DECL_SECTION_LIMITS(Type, Name)                           \
-    extern SECTION_I(Name, "a") Type SECTION_START_(Name);          \
-    extern SECTION_I(Name, "z") Type SECTION_END_(Name)
+    extern SECTION_(CRIT_STR_(Name$a)) Type SECTION_START_(Name);   \
+    extern SECTION_(CRIT_STR_(Name$z)) Type SECTION_END_(Name)
 
 #  define IMPL_SECTION_LIMITS(Type, Name)                           \
-    SECTION_I(Name, "a") Type SECTION_START_(Name);                 \
-    SECTION_I(Name, "z") Type SECTION_END_(Name);                   \
+    SECTION_(CRIT_STR_(Name$a)) Type SECTION_START_(Name);          \
+    SECTION_(CRIT_STR_(Name$z)) Type SECTION_END_(Name);            \
     Type *const SECTION_START(Name) = &SECTION_START_(Name);        \
     Type *const SECTION_END(Name)   = &SECTION_END_(Name)
 
