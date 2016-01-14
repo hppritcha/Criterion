@@ -263,6 +263,7 @@ endif()
 
 if (PCRE_FOUND)
   target_link_libraries(criterion ${PCRE_LIBRARIES})
+  include_directories(${PCRE_INCLUDE_DIRS})
 endif()
 
 if (LIBINTL_LIB_FOUND)
