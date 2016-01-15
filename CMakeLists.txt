@@ -7,6 +7,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${MODULE_DIR})
 set(LIBCSPTR_DISABLE_TESTS ON)
 set(LIBCSPTR_DISABLE_COVERALLS ON)
 
+set(CMAKE_SKIP_BUILD_RPATH  FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Content options
 
 option(THEORIES "Activate the support for theories" ON)
@@ -130,6 +135,23 @@ include(CheckLibraryExists)
 CHECK_LIBRARY_EXISTS(rt clock_gettime "time.h" HAVE_CLOCK_GETTIME)
 
 find_package(PCRE)
+# try with pkg-config if not found, libpcre comes with a
+# pkg-config file
+if (NOT PCRE_FOUND)
+  find_package(PkgConfig)
+  if (PKGCONFIG_FOUND)
+    MESSAGE( STATUS "Trying to find PCRE using pkg-config")
+    pkg_check_modules(PCRE_PKG libpcre)
+    if (PCRE_PKG_FOUND)
+       MESSAGE( STATUS "PCRE_LIBRARIES: " ${PCRE_PKG_LIBRARIES} )
+       MESSAGE( STATUS "PCRE_LIBRARY_DIRS: " ${PCRE_PKG_LIBRARY_DIRS} )
+       MESSAGE( STATUS "PCRE_INClUDE_DIRS: " ${PCRE_PKG_INCLUDE_DIRS} )
+       MESSAGE( STATUS "PCRE_FOUND set")
+       set(PCRE_LIBRARIES ${PCRE_PKG_LIBRARY_DIRS}/lib${PCRE_PKG_LIBRARIES}.so)
+       MESSAGE( STATUS "PCRE_LIBRARIES: " ${PCRE_LIBRARIES} )
+    endif()
+  endif()
+endif()
 
 # List sources and headers
 
@@ -310,3 +332,9 @@ option(UPLOAD_DEB "Upload package to launchpad" OFF)
 if (UNIX AND UPLOAD_DEB)
   include (DebConfig)
 endif ()
+
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
+   MESSAGE( STATUS "ADDING TO RPATH:  ${CMAKE_INSTALL_PREFIX}/lib" )
+   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif("${isSystemDir}" STREQUAL "-1")

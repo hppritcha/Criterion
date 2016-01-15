@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: criterion 2.0.0\n"
 "Report-Msgid-Bugs-To: franklinmathieu+criterion@gmail.com\n"
-"POT-Creation-Date: 2015-11-27 12:24+0100\n"
+"POT-Creation-Date: 2016-01-15 16:54-0600\n"
 "PO-Revision-Date: 2015-04-03 17:58+0200\n"
 "Last-Translator:  <franklinmathieu@gmail.com>\n"
 "Language-Team: French\n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: src/log/normal.c:42
@@ -84,8 +84,8 @@ msgstr "%1$s::%2$s: (%3$3.2fs)\n"
 #: src/log/normal.c:57
 #, fuzzy, c-format
 msgid ""
-"%1$sWarning! The test `%2$s::%3$s` crashed during its setup or teardown."
-"%4$s\n"
+"%1$sWarning! The test `%2$s::%3$s` crashed during its setup or teardown.%4"
+"$s\n"
 msgstr ""
 "%1$sAttention! Le test `%2$s::%3$s` a planté pendant son initialisation ou "
 "sa finalisation.%4$s\n"
@@ -111,8 +111,8 @@ msgid ""
 "%1$sSynthesis: Tested: %2$s%3$lu%4$s | Passing: %5$s%6$lu%7$s | Failing: %8$s"
 "%9$lu%10$s | Crashing: %11$s%12$lu%13$s %14$s\n"
 msgstr ""
-"%1$sSynthèse: Testés: %2$s%3$lu%4$s | Validés: %5$s%6$lu%7$s | Échoués: %8$s"
-"%9$lu%10$s | Plantages: %11$s%12$lu%13$s %14$s\n"
+"%1$sSynthèse: Testés: %2$s%3$lu%4$s | Validés: %5$s%6$lu%7$s | Échoués: %8$s%"
+"9$lu%10$s | Plantages: %11$s%12$lu%13$s %14$s\n"
 
 #: src/log/normal.c:77
 #, fuzzy, c-format
@@ -185,7 +185,7 @@ msgstr "L'instruction `%1$s` a levé une instance de l'exception `%2$s`."
 msgid "The statement `%1$s` did not throw an instance of the `%2$s` exception."
 msgstr "L'instruction `%1$s` n'a pas levé d'instance de l'exception `%2$s`."
 
-#: src/core/runner.c:58
+#: src/core/runner.c:57
 #, c-format
 msgid ""
 "%1$sWarning! Criterion has detected that it is running under valgrind, but "
@@ -196,7 +196,7 @@ msgstr ""
 "l'option no_early_exit est explicitement désactivée. Les rapports d'erreur "
 "ne seront pas précis!%2$s\n"
 
-#: src/core/runner.c:62
+#: src/core/runner.c:61
 #, c-format
 msgid ""
 "%1$sWarning! Criterion has detected that it is running under valgrind, but "
